@@ -170,9 +170,12 @@ export function MainContent({ currentTable = "film" }: MainContentProps) {
          const column = columns.find(col => col.key === showFullText.columnKey)
          
          return (
-           <div className="fixed inset-0 z-50" onClick={() => setShowFullText(null)}>
+                       <div className="fixed inset-0 z-50" onClick={() => {
+              setShowFullText(null)
+              setEditingCell(null)
+            }}>
                            <div 
-                className="absolute bg-white border border-gray-300 rounded shadow-lg z-50"
+                className="absolute bg-white border border-blue-500 rounded shadow-lg z-50"
                 style={{
                   left: `${showFullText.rect.left}px`,
                   top: `${showFullText.rect.top}px`,
@@ -272,7 +275,8 @@ export function MainContent({ currentTable = "film" }: MainContentProps) {
                        key={colIndex}
                                                className={cn(
                           "px-3 py-2 text-sm border-r border-gray-100 last:border-r-0 relative",
-                          selectedRow === row.film_id && "bg-blue-200 border-blue-300"
+                          selectedRow === row.film_id && "bg-blue-200 border-blue-300",
+                          editingCell && editingCell.rowIndex === rowIndex && editingCell.columnKey === column.key && "bg-white border border-blue-500 rounded shadow-lg"
                         )}
                        style={{ 
                          width: columnWidths[column.key],
@@ -300,6 +304,8 @@ export function MainContent({ currentTable = "film" }: MainContentProps) {
                               e.stopPropagation()
                               // 先选中这一行
                               setSelectedRow(row.film_id)
+                              // 设置编辑状态
+                              setEditingCell({ rowIndex, columnKey: column.key })
                               // 检查文本是否超过列宽
                               const text = row[column.key as keyof Film]
                               const textWidth = e.currentTarget.scrollWidth
